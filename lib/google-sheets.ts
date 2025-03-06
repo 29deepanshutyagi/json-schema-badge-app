@@ -1,6 +1,10 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 
+interface SheetError extends Error {
+  message: string;
+}
+
 const serviceAccountAuth = new JWT({
   email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
   key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
@@ -22,8 +26,9 @@ async function initializeSheet() {
 
   try {
     await sheet.loadHeaderRow();
-  } catch (error: any) {
-    if (error.message.includes('No header row')) {
+  } catch (error: unknown) {
+    const sheetError = error as SheetError;
+    if (sheetError.message.includes('No header row')) {
       await sheet.setHeaderRow(['name', 'email', 'issued']);
       // Add empty row to commit headers
       await sheet.addRow({});
@@ -37,10 +42,11 @@ export async function saveQuizData(name: string, email: string) {
     const sheet = await initializeSheet();
     await sheet.addRow({ name, email, issued: "No" });
     return true;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const sheetError = error as SheetError;
     console.error('Google Sheets Error:', {
       sheetId: process.env.GOOGLE_SHEET_ID,
-      error: error.message
+      error: sheetError.message
     });
     throw error;
   }

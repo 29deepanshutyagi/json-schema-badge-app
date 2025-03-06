@@ -2,6 +2,16 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 import { processUnissuedBadges } from "@/lib/google-sheets";
 
+// Define an interface for the Axios error response
+interface AxiosErrorResponse {
+  response?: {
+    data?: unknown; // You can specify a more precise type if you know the structure
+    status?: number;
+    headers?: unknown;
+  };
+  message?: string;
+}
+
 export async function POST() {
   try {
     if (!process.env.BADGR_API_URL || !process.env.BADGR_BADGE_CLASS_ID || !process.env.BADGR_ISSUER_ID || !process.env.BADGR_ACCESS_TOKEN) {
@@ -43,7 +53,7 @@ export async function POST() {
             }
           );
 
-          const badgeId = response.data.result.id; // Extract issued badge ID
+          // const badgeId = response.data.result.id; // Extract issued badge ID
           const badgeUrl = response.data.result[0].openBadgeId;
 
           console.log(`✅ Badge issued for ${email}: ${badgeUrl}`);
@@ -56,14 +66,14 @@ export async function POST() {
 
           issuedBadges.push({ email, badgeUrl });
           issuedCount++;
-        } catch (apiError: any) {
-          console.error(`❌ Failed to issue badge for ${email}:`, apiError.response?.data || apiError.message);
-          // In your catch block:
-console.error(`❌ Failed to issue badge for ${email}:`, {
-  status: apiError.response?.status,
-  data: apiError.response?.data,
-  headers: apiError.response?.headers  // Check for API version mismatch
-});
+        } catch (apiError: unknown) {
+          const axiosError = apiError as AxiosErrorResponse; // Use the defined type
+          console.error(`❌ Failed to issue badge for ${email}:`, axiosError.response?.data || axiosError.message);
+          console.error(`❌ Failed to issue badge for ${email}:`, {
+            status: axiosError.response?.status,
+            data: axiosError.response?.data,
+            headers: axiosError.response?.headers
+          });
         }
       }
     }
@@ -77,16 +87,16 @@ console.error(`❌ Failed to issue badge for ${email}:`, {
       issuedBadges
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("🚨 Badge Issuance Error:", {
-      error: error.response?.data || error.message
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     });
 
     return NextResponse.json(
       {
         success: false,
         error: "Badge issuance failed",
-        details: error.message,
+        details: error instanceof Error ? error.message : 'Unknown error occurred',
         sheetId: process.env.GOOGLE_SHEET_ID
       },
       { status: 500 }
