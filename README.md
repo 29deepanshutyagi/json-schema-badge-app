@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Badge Issuer
 
-## Getting Started
+This project is a Next.js application that automates the issuance of digital badges using the Badgr API and retrieves data from Google Sheets.
 
-First, run the development server:
+## Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Environment Variables](#environment-variables)
+- [Running the Project](#running-the-project)
+- [Building the Project](#building-the-project)
+- [License](#license)
+
+## Prerequisites
+
+- Node.js (version 12.x or later)
+- [pnpm](https://pnpm.js.org/) (Node Package Manager)
+- A GitHub account (for version control)
+- Access to Google Sheets and Badgr API
+
+## Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/yourusername/your-repo-name.git
+   cd your-repo-name
+   ```
+
+2. Install the dependencies using `pnpm`:
+
+   ```bash
+   pnpm install
+   ```
+
+## Environment Variables
+
+Create a `.env` file in the root of your project based on the `.env.example` file. Fill in the required values:
+
+```plaintext
+# Badgr
+BADGR_API_URL="https://api.badgr.io"
+BADGR_ACCESS_TOKEN="YOUR_BADGR_ACCESS_TOKEN"
+BADGR_ISSUER_ID="YOUR_BADGR_ISSUER_ID"
+BADGR_BADGE_CLASS_ID="YOUR_BADGR_BADGE_CLASS_ID"
+
+# Google
+GOOGLE_SERVICE_ACCOUNT_EMAIL="YOUR_GOOGLE_SERVICE_ACCOUNT_EMAIL"
+GOOGLE_PRIVATE_KEY="YOUR_GOOGLE_PRIVATE_KEY"
+GOOGLE_SHEET_ID="YOUR_GOOGLE_SHEET_ID"
+
+# App
+PORT=3000
+DEBUG=true
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Running the Project
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To run the project in development mode, use the following command:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm run dev
+```
 
-## Learn More
+This will start the development server, and you can view the application at `http://localhost:3000`.
 
-To learn more about Next.js, take a look at the following resources:
+## Building the Project
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To build the project for production, run:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm run build
+```
 
-## Deploy on Vercel
+If you want to export the application as static files, you can run:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm run export
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
